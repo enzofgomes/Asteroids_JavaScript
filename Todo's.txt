@@ -1,0 +1,6 @@
+1. Project Setup []
+2. Create movable player 
+3. Shoot
+4. Spawn asteroids
+5. Hit asteroids
+6. Game over
