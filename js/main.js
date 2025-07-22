@@ -399,7 +399,7 @@ window.addEventListener('keyup', (event) => {
 });
 
 // Load sound effects
-const soundBackground = new Audio('sounds/background.mp3');
+const soundBackground = new Audio('sounds/spacetravel.mp3');
 soundBackground.loop = true;
 soundBackground.volume = 0.5;
 
