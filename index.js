@@ -451,8 +451,8 @@ function animate() {
             const projectile = projectiles[j]
 
             if (circleCollision(asteroid, projectile)) {
-                soundExplosion.currentTime = 0; // rewind to start
                 soundExplosion.play();
+                soundExplosion.currentTime = 0; // rewind to start
                 asteroids.splice(i, 1)
                 projectiles.splice(j, 1)
                 score += 5;

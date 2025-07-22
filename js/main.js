@@ -217,8 +217,7 @@ function animate() {
 
         // Check for collision between asteroid and player (uses isInvincible flag)
         if (!isInvincible && circleTriangleCollision(asteroid, player.getVertices())) {
-            soundExplosion.currentTime = 0;
-            soundExplosion.play();
+            playSfx(soundExplosion);
             showGameOver();
             window.cancelAnimationFrame(animationId);
             clearInterval(timerInterval); // Also clear timer on game over
@@ -240,8 +239,7 @@ function animate() {
             const projectile = projectiles[j];
 
             if (circleCollision(asteroid, projectile)) {
-                soundExplosion.currentTime = 0;
-                soundExplosion.play();
+                playSfx(soundExplosion);
                 asteroids.splice(i, 1);
                 projectiles.splice(j, 1);
                 score += 5;
@@ -274,9 +272,7 @@ function animate() {
             currentPowerUp = getRandomPowerUp();
             showCollectedMsg(currentPowerUp);
             updatePowerUpDisplay();
-
-            soundPowerup.currentTime = 0; // Play powerup sound
-            soundPowerup.play();
+            playSfx(soundPowerup); // Play powerup sound
 
             // Clear any previous power-up effects
             if (powerUpTimeout) clearTimeout(powerUpTimeout);
@@ -341,8 +337,7 @@ window.addEventListener('keydown', (event) => {
             break;
         case 'Space':
             if (canShoot) {
-                soundShoot.currentTime = 0;
-                soundShoot.play();
+                playSfx(soundShoot);
                 // Check shotgunActive flag here
                 if (shotgunActive) {
                     for (let angleOffset of [-0.2, 0, 0.2]) {
@@ -411,6 +406,13 @@ const soundShoot = new Audio('sounds/shoot.mp3');
 const soundExplosion = new Audio('sounds/spaceexplosion.mp3');
 
 const soundPowerup = new Audio('sounds/powerup.mp3'); // NEW POWERUP SOUND
+
+// Helper function to play a sound effect from the start, allowing for overlaps.
+// This clones the audio element to ensure multiple sounds can play at once.
+function playSfx(sound) {
+    const sfx = sound.cloneNode();
+    sfx.play();
+}
 
 let canShoot = true;
 
