@@ -5,6 +5,7 @@ import { Projectile } from './projectile.js';
 import { Asteroid } from './asteroid.js';
 import { circleCollision, circleTriangleCollision } from './collisionUtils.js';
 import { getRandomPowerUp } from './powerup.js';
+import { AudioPool } from './audioPool.js';
 import {
     ROTATIONAL_SPEED, FRICTION, PROJECTILE_SPEED, ASTEROID_SPEED,
     SHOOT_COOLDOWN, STAR_COUNT, ASTEROID_MIN_INTERVAL, ASTEROID_DECREASE_STEP,
@@ -85,7 +86,7 @@ function startAsteroidInterval() {
     asteroidIntervalId = setTimeout(scheduleNextAsteroid, asteroidSpawnInterval);
 }
 function spawnAsteroid() {
-    const index = Math.floor(Math.random() * 4);
+    const index = Math.floor(Math.random() * 8); // Now 8 spawn points (4 edges + 4 corners)
     let x, y;
     let vx, vy;
     let radius = 50 * Math.random() + 10;
@@ -94,25 +95,49 @@ function spawnAsteroid() {
             x = 0 - radius;
             y = Math.random() * canvas.height;
             vx = 1 * ASTEROID_SPEED;
-            vy = 0 * ASTEROID_SPEED;
+            vy = 0;
             break;
         case 1: // bottom side of the screen
             x = Math.random() * canvas.width;
             y = canvas.height + radius;
-            vx = 0 * ASTEROID_SPEED;
+            vx = 0;
             vy = -1 * ASTEROID_SPEED;
             break;
         case 2: // right side of the screen
             x = canvas.width + radius;
             y = Math.random() * canvas.height;
             vx = -1 * ASTEROID_SPEED;
-            vy = 0 * ASTEROID_SPEED;
+            vy = 0;
             break;
         case 3: // top side of the screen
             x = Math.random() * canvas.width;
             y = 0 - radius;
-            vx = 0 * ASTEROID_SPEED;
+            vx = 0;
             vy = 1 * ASTEROID_SPEED;
+            break;
+        case 4: // top-left corner
+            x = 0 - radius;
+            y = 0 - radius;
+            vx = 1 * ASTEROID_SPEED;
+            vy = 1 * ASTEROID_SPEED;
+            break;
+        case 5: // top-right corner
+            x = canvas.width + radius;
+            y = 0 - radius;
+            vx = -1 * ASTEROID_SPEED;
+            vy = 1 * ASTEROID_SPEED;
+            break;
+        case 6: // bottom-left corner
+            x = 0 - radius;
+            y = canvas.height + radius;
+            vx = 1 * ASTEROID_SPEED;
+            vy = -1 * ASTEROID_SPEED;
+            break;
+        case 7: // bottom-right corner
+            x = canvas.width + radius;
+            y = canvas.height + radius;
+            vx = -1 * ASTEROID_SPEED;
+            vy = -1 * ASTEROID_SPEED;
             break;
     }
     asteroids.push(
@@ -217,7 +242,7 @@ function animate() {
 
         // Check for collision between asteroid and player (uses isInvincible flag)
         if (!isInvincible && circleTriangleCollision(asteroid, player.getVertices())) {
-            playSfx(soundExplosion);
+            explosionPool.play();
             showGameOver();
             window.cancelAnimationFrame(animationId);
             clearInterval(timerInterval); // Also clear timer on game over
@@ -239,7 +264,7 @@ function animate() {
             const projectile = projectiles[j];
 
             if (circleCollision(asteroid, projectile)) {
-                playSfx(soundExplosion);
+                explosionPool.play();
                 asteroids.splice(i, 1);
                 projectiles.splice(j, 1);
                 score += 5;
@@ -272,7 +297,7 @@ function animate() {
             currentPowerUp = getRandomPowerUp();
             showCollectedMsg(currentPowerUp);
             updatePowerUpDisplay();
-            playSfx(soundPowerup); // Play powerup sound
+            powerupPool.play(); // Play powerup sound
 
             // Clear any previous power-up effects
             if (powerUpTimeout) clearTimeout(powerUpTimeout);
@@ -337,7 +362,7 @@ window.addEventListener('keydown', (event) => {
             break;
         case 'Space':
             if (canShoot) {
-                playSfx(soundShoot);
+                shootPool.play();
                 // Check shotgunActive flag here
                 if (shotgunActive) {
                     for (let angleOffset of [-0.2, 0, 0.2]) {
@@ -407,12 +432,10 @@ const soundExplosion = new Audio('sounds/spaceexplosion.mp3');
 
 const soundPowerup = new Audio('sounds/powerup.mp3'); // NEW POWERUP SOUND
 
-// Helper function to play a sound effect from the start, allowing for overlaps.
-// This clones the audio element to ensure multiple sounds can play at once.
-function playSfx(sound) {
-    const sfx = sound.cloneNode();
-    sfx.play();
-}
+// Create audio pools for sound effects to prevent performance issues from rapid cloning
+const shootPool = new AudioPool(soundShoot, 10);
+const explosionPool = new AudioPool(soundExplosion, 15);
+const powerupPool = new AudioPool(soundPowerup, 5);
 
 let canShoot = true;
 
@@ -489,6 +512,9 @@ function resetGame() {
     speedBoostActive = false;
     currentPowerUp = null;
     updatePowerUpDisplay();
+
+    // Reset background music to the beginning
+    soundBackground.currentTime = 0;
 
     animate();
     startTimerAndDifficulty();

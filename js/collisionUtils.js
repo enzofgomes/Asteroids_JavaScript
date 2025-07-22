@@ -5,15 +5,12 @@ export function circleCollision(circle1, circle2) {
     const xDifference = circle2.position.x - circle1.position.x;
     const yDifference = circle2.position.y - circle1.position.y;
 
-    const distance = Math.sqrt(
-        xDifference * xDifference + yDifference * yDifference
-    );
+    // Use squared distances to avoid the expensive Math.sqrt() operation.
+    const distanceSquared = xDifference * xDifference + yDifference * yDifference;
+    const radiiSum = circle1.radius + circle2.radius;
 
-    if (distance <= circle1.radius + circle2.radius) {
-        return true;
-    }
-
-    return false;
+    // If the squared distance is less than or equal to the squared sum of the radii, they are colliding.
+    return distanceSquared <= radiiSum * radiiSum;
 }
 
 // Check if a circle is colliding with a triangle
@@ -50,4 +47,3 @@ export function circleTriangleCollision(circle, triangle) {
     // No collision
     return false;
 }
-
