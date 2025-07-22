@@ -488,6 +488,10 @@ function animate() {
             currentPowerUp = getRandomPowerUp();
             showCollectedMsg(currentPowerUp);
             updatePowerUpDisplay();
+
+            soundPowerup.currentTime = 0; // Rewind to start for immediate playback if played again
+            soundPowerup.play();
+
             // Clear any previous power-up effects
             if (powerUpTimeout) clearTimeout(powerUpTimeout);
             isInvincible = false;
@@ -623,6 +627,9 @@ const soundShoot = new Audio('sounds/shoot.mp3');
 
 // Load asteroid explosion sound
 const soundExplosion = new Audio('sounds/spaceexplosion.mp3');
+
+// Load power-up collected sound (ADD THIS LINE)
+const soundPowerup = new Audio('sounds/powerup.mp3'); 
 
 // Shooting cooldown variables
 let canShoot = true;
