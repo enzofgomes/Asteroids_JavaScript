@@ -4,6 +4,18 @@
     }
 </style>
 
-<canvas></canvas> 
-<script src ="./index.js"></script>
+<body>
+    <canvas></canvas>
+    <div id="score" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);color:white;font-size:2em;font-family:sans-serif;z-index:10;">Score: 0</div>
+    <div id="timer" style="position:fixed;top:20px;left:20px;color:red;font-size:2em;font-family:sans-serif;z-index:10;">Time: 0s</div>
+    <div id="collectedMsg" style="display:none;position:fixed;bottom:40px;left:50%;transform:translateX(-50%);color:purple;font-size:2em;font-family:sans-serif;z-index:20;">collected</div>
+    <div id="powerUpDisplay" style="position:fixed;top:20px;right:30px;color:violet;font-size:1.5em;font-family:sans-serif;z-index:10;text-align:right;"></div>
+    <div id="gameOverMenu" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);color:white;z-index:20;justify-content:center;align-items:center;flex-direction:column;font-family:sans-serif;">
+      <div style="font-size:3em;margin-bottom:20px;">Game Over</div>
+      <div id="finalScore" style="font-size:2em;margin-bottom:10px;"></div>
+      <div id="highestScore" style="font-size:1.5em;margin-bottom:30px;"></div>
+      <button id="playAgainBtn" style="font-size:1.5em;padding:10px 30px;cursor:pointer;">Play Again</button>
+    </div>
+  </body>
+  <script src ="./index.js"></script>
 
