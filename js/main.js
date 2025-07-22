@@ -39,6 +39,7 @@ const keys = {
     w: { pressed: false },
     a: { pressed: false },
     d: { pressed: false },
+    space: { pressed: false } // For continuous shooting
 };
 
 // Arrays to store projectiles and asteroids
@@ -59,12 +60,12 @@ for (let i = 0; i < STAR_COUNT; i++) {
 let timeElapsed = 0;
 const timerDiv = document.getElementById('timer');
 let timerInterval;
-let asteroidSpawnInterval = 2500; // Start at 2500ms
+let asteroidSpawnInterval = 3000; // Start at 3000ms
 
 function startTimerAndDifficulty() {
     if (timerInterval) clearInterval(timerInterval);
     timeElapsed = 0;
-    asteroidSpawnInterval = 2500;
+    asteroidSpawnInterval = 3000;
     timerDiv.textContent = 'Time: 0s';
     timerInterval = setInterval(() => {
         timeElapsed++;
@@ -285,6 +286,45 @@ function animate() {
     if (keys.d.pressed) player.rotation += ROTATIONAL_SPEED;
     else if (keys.a.pressed) player.rotation -= ROTATIONAL_SPEED;
 
+    // Handle continuous shooting if space is pressed
+    if (keys.space.pressed && canShoot) {
+        shootPool.play();
+        // Check shotgunActive flag here
+        if (shotgunActive) {
+            for (let angleOffset of [-0.2, 0, 0.2]) {
+                projectiles.push(
+                    new Projectile({
+                        position: {
+                            x: player.position.x + Math.cos(player.rotation + angleOffset) * 30,
+                            y: player.position.y + Math.sin(player.rotation + angleOffset) * 30,
+                        },
+                        velocity: {
+                            x: Math.cos(player.rotation + angleOffset) * PROJECTILE_SPEED,
+                            y: Math.sin(player.rotation + angleOffset) * PROJECTILE_SPEED,
+                        },
+                        ctx: ctx // Pass ctx to Projectile
+                    })
+                );
+            }
+        } else {
+            projectiles.push(
+                new Projectile({
+                    position: {
+                        x: player.position.x + Math.cos(player.rotation) * 30,
+                        y: player.position.y + Math.sin(player.rotation) * 30,
+                    },
+                    velocity: {
+                        x: Math.cos(player.rotation) * PROJECTILE_SPEED,
+                        y: Math.sin(player.rotation) * PROJECTILE_SPEED,
+                    },
+                    ctx: ctx // Pass ctx to Projectile
+                })
+            );
+        }
+        canShoot = false;
+        setTimeout(() => { canShoot = true; }, SHOOT_COOLDOWN);
+    }
+
     drawPowerUp();
 
     // Check for power-up collection
@@ -361,43 +401,7 @@ window.addEventListener('keydown', (event) => {
             keys.d.pressed = true;
             break;
         case 'Space':
-            if (canShoot) {
-                shootPool.play();
-                // Check shotgunActive flag here
-                if (shotgunActive) {
-                    for (let angleOffset of [-0.2, 0, 0.2]) {
-                        projectiles.push(
-                            new Projectile({
-                                position: {
-                                    x: player.position.x + Math.cos(player.rotation + angleOffset) * 30,
-                                    y: player.position.y + Math.sin(player.rotation + angleOffset) * 30,
-                                },
-                                velocity: {
-                                    x: Math.cos(player.rotation + angleOffset) * PROJECTILE_SPEED,
-                                    y: Math.sin(player.rotation + angleOffset) * PROJECTILE_SPEED,
-                                },
-                                ctx: ctx // Pass ctx to Projectile
-                            })
-                        );
-                    }
-                } else {
-                    projectiles.push(
-                        new Projectile({
-                            position: {
-                                x: player.position.x + Math.cos(player.rotation) * 30,
-                                y: player.position.y + Math.sin(player.rotation) * 30,
-                            },
-                            velocity: {
-                                x: Math.cos(player.rotation) * PROJECTILE_SPEED,
-                                y: Math.sin(player.rotation) * PROJECTILE_SPEED,
-                            },
-                            ctx: ctx // Pass ctx to Projectile
-                        })
-                    );
-                }
-                canShoot = false;
-                setTimeout(() => { canShoot = true; }, SHOOT_COOLDOWN);
-            }
+            keys.space.pressed = true;
             break;
     }
 });
@@ -414,6 +418,9 @@ window.addEventListener('keyup', (event) => {
             break;
         case 'KeyD':
             keys.d.pressed = false;
+            break;
+        case 'Space':
+            keys.space.pressed = false;
             break;
     }
 });

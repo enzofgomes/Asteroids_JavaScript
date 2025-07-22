@@ -10,7 +10,7 @@ export const ASTEROID_SPEED = 2; // How fast the asteroids move
 export const SHOOT_COOLDOWN = 200; // milliseconds
 export const STAR_COUNT = 100; // Number of stars
 
-export const ASTEROID_MIN_INTERVAL = 400; // Hardest
+export const ASTEROID_MIN_INTERVAL = 100; // Hardest
 export const ASTEROID_DECREASE_STEP = 50; // ms decrease per second
 
 export const POWER_UP_SIZE = 10;
