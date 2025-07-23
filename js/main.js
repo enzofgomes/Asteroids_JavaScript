@@ -17,6 +17,11 @@ const canvas = document.querySelector('canvas');
 // Get the 2D drawing context for the canvas
 const ctx = canvas.getContext('2d');
 
+// Get Main Menu UI Elements
+const mainMenu = document.getElementById('mainMenu');
+const playBtn = document.getElementById('playBtn');
+const soundBtn = document.getElementById('soundBtn');
+
 // Set the canvas size to fill the window
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -439,6 +444,23 @@ const soundExplosion = new Audio('sounds/spaceexplosion.mp3');
 
 const soundPowerup = new Audio('sounds/powerup.mp3'); // NEW POWERUP SOUND
 
+// --- Sound Management ---
+let isMuted = false;
+const allSounds = [soundBackground, soundMove, soundShoot, soundExplosion, soundPowerup];
+
+function setMute(muted) {
+    isMuted = muted;
+    // The 'muted' property is the cleanest way to handle this.
+    // It's inherited by clones, so the audio pools will respect it.
+    allSounds.forEach(sound => {
+        sound.muted = isMuted;
+    });
+    // Also mute the looped movement sound directly if it's playing
+    soundMove.muted = isMuted;
+    soundBtn.textContent = isMuted ? 'Sound: Off' : 'Sound: On';
+}
+soundBtn.addEventListener('click', () => setMute(!isMuted));
+
 // Create audio pools for sound effects to prevent performance issues from rapid cloning
 const shootPool = new AudioPool(soundShoot, 10);
 const explosionPool = new AudioPool(soundExplosion, 15);
@@ -530,15 +552,17 @@ function resetGame() {
     collectedMsgDiv.style.display = 'none';
     collectedMsgDiv.textContent = 'collected';
 }
+// animate(); // REMOVED: Game will now start on button click
 
-// Start the main game loop
-animate();
-playAgainBtn.addEventListener('click', resetGame);
+playBtn.addEventListener('click', () => {
+    mainMenu.style.display = 'none';
+    resetGame();
+    startBackgroundMusic();
+});
+
+playAgainBtn.addEventListener('click', resetGame); // This button still works as before
+
 
 function startBackgroundMusic() {
-    soundBackground.play();
-    window.removeEventListener('keydown', startBackgroundMusic);
-    window.removeEventListener('mousedown', startBackgroundMusic);
+    soundBackground.play();  
 }
-window.addEventListener('keydown', startBackgroundMusic);
-window.addEventListener('mousedown', startBackgroundMusic);

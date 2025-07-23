@@ -41,6 +41,33 @@
             cursor: pointer;
             margin-top: 30px;
         }
+        #mainMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex; /* Show by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: monospace;
+            text-align: center;
+        }
+        #mainMenu h1 { font-size: 4em; margin-bottom: 20px; }
+        #mainMenu button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            background-color: #444;
+            color: white;
+            border: 2px solid white;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 250px; /* Give buttons a consistent width */
+        }
+
     </style>
 </head>
 <body>
@@ -55,6 +82,12 @@
         <p id="finalScore"></p>
         <p id="highestScore"></p>
         <button id="playAgainBtn">Play Again</button>
+    </div>
+
+    <div id="mainMenu">
+      <h1>Asteroidz.io</h1>
+      <button id="playBtn">Play</button>
+      <button id="soundBtn">Sound: On</button>
     </div>
 
     <script type="module" src="./js/main.js"></script>
