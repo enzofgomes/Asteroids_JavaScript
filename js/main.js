@@ -354,7 +354,7 @@ function animate() {
             // Apply power-up effect (UPDATED LOGIC)
             switch (currentPowerUp.name) {
                 case "speed":
-                    currentGlobalSpeed = initialPlayerSpeed * 3; // Update the global speed variable
+                    currentGlobalSpeed = initialPlayerSpeed * 2; // Update the global speed variable
                     speedBoostActive = true;
                     powerUpTimeout = setTimeout(() => {
                         currentGlobalSpeed = initialPlayerSpeed; // Reset global speed
